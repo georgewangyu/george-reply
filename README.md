@@ -40,7 +40,7 @@ George Reply is built around Meta's official Instagram private replies. It does 
 - DM and Story reply triggers. The same keywords can also fire on an inbound DM, which covers text replies to your Stories, since Instagram delivers those as DMs. That makes `Reply LINK to this Story` work with no post involved. Turn it on per campaign, and subscribe to the `messages` webhook field when you set up your Meta app.
 - Tracked links. Swap a link for a tracked redirect and see clicks and CTR per campaign.
 - Two link buttons. Send up to two tappable link buttons in one DM, each a separate tracked link with its own click stats.
-- Follow gate. Optionally require a follow before you hand over the link. The DM asks the commenter to follow and tap a button; on tap, George Reply checks Meta's `is_user_follow_business` flag and only sends the link once they follow, re-prompting until then. It fails open (sends the link anyway) when Instagram does not return follow status, so a real follower is never trapped.
+- Follow gate. Optionally require a follow before you hand over the link. The DM asks the commenter to follow and tap a button; on tap, George Reply checks Meta's `is_user_follow_business` flag and only sends the link after Meta explicitly confirms the follow. A false or unavailable status stays gated and re-prompts instead of releasing the resource.
 - Personalization. Use `{username}` in your message to greet the commenter by name.
 - Per-account rate limiting. Stays under Meta's documented cap of 750 private replies per hour, and queues the overflow instead of dropping it.
 - Multiple Instagram accounts. Connect several professional accounts under one workspace, each with its own limits.
