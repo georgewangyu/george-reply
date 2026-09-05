@@ -51,13 +51,14 @@ export function getMetaGraphApiVersion(): string {
 }
 
 /**
- * Optional sign-in allowlist.
+ * Sign-in allowlist for a production deployment.
  *
  * A self-hosted instance on a public domain is open to signup: the email
  * provider creates an account for whoever asks for a magic link, and that
  * account gets its own workspace. ALLOWED_EMAILS closes it to a comma-separated
- * list of addresses. Left unset, sign-in behaves exactly as before, so an
- * existing deployment is unaffected.
+ * list of addresses. Local development remains open when it is unset, but a
+ * production deployment fails closed so an accidentally public URL cannot
+ * create unapproved workspaces.
  */
 export function isEmailAllowedToSignIn(
   email: string | null | undefined
@@ -67,7 +68,7 @@ export function isEmailAllowedToSignIn(
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
 
-  if (allowed.length === 0) return true;
+  if (allowed.length === 0) return process.env.NODE_ENV !== "production";
   if (!email) return false;
   return allowed.includes(email.toLowerCase());
 }

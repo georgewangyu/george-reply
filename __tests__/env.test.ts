@@ -32,13 +32,25 @@ describe("environment helpers", () => {
 });
 
 describe("sign-in allowlist", () => {
-  it("allows everyone when ALLOWED_EMAILS is unset", () => {
+  it("allows everyone outside production when ALLOWED_EMAILS is unset", () => {
     expect(isEmailAllowedToSignIn("anyone@example.com")).toBe(true);
   });
 
-  it("allows everyone when ALLOWED_EMAILS is empty or only separators", () => {
+  it("allows everyone outside production when ALLOWED_EMAILS is empty", () => {
     vi.stubEnv("ALLOWED_EMAILS", "  , ,  ");
     expect(isEmailAllowedToSignIn("anyone@example.com")).toBe(true);
+  });
+
+  it("fails closed in production when ALLOWED_EMAILS is unset", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(isEmailAllowedToSignIn("anyone@example.com")).toBe(false);
+  });
+
+  it("uses the allowlist in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ALLOWED_EMAILS", "owner@example.com");
+    expect(isEmailAllowedToSignIn("owner@example.com")).toBe(true);
+    expect(isEmailAllowedToSignIn("stranger@example.com")).toBe(false);
   });
 
   it("only allows listed addresses once ALLOWED_EMAILS is set", () => {
