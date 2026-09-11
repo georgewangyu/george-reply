@@ -3,14 +3,20 @@ set -euo pipefail
 
 SCRIPT_DIR=${0:A:h}
 REPO_DIR=${SCRIPT_DIR:h}
-PUBLIC_URL=https://george-reply.tailbb125f.ts.net
+LOCAL_SERVICE_ENV_FILE=${GEORGE_REPLY_LOCAL_SERVICE_ENV_FILE:-$REPO_DIR/.env.local-service}
 
 cd "$REPO_DIR"
 set -a
 source .env.local
+if [[ ! -r "$LOCAL_SERVICE_ENV_FILE" ]]; then
+  echo "missing local service environment: $LOCAL_SERVICE_ENV_FILE" >&2
+  exit 78
+fi
+source "$LOCAL_SERVICE_ENV_FILE"
 set +a
 
-export NEXTAUTH_URL="$PUBLIC_URL"
+: "${LOCAL_SERVICE_PUBLIC_URL:?Set LOCAL_SERVICE_PUBLIC_URL in $LOCAL_SERVICE_ENV_FILE}"
+export NEXTAUTH_URL="$LOCAL_SERVICE_PUBLIC_URL"
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 case "${1:-}" in
